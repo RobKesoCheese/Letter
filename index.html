@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Caridee</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #fcf1f4;
+            --envelope-color: #f7a8b8;
+            --envelope-dark: #f095a8; 
+            --envelope-flap: #ffb7c5; 
+            --seal-color: #d90429;    
+            --text-main: #333;
+            --text-red: #d90429;
+            --text-grey: #888;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Lora', serif;
+            overflow: hidden; 
+        }
+
+        .hearts-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .floating-heart {
+            position: absolute;
+            bottom: -50px;
+            color: rgba(255, 183, 197, 0.6);
+            animation: floatUp linear forwards;
+            font-size: 20px;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+            100% { transform: translateY(-120vh) rotate(360deg) scale(1.5); opacity: 0; }
+        }
+
+        .wrapper {
+            position: relative;
+            width: 450px;
+            height: 300px;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .hint {
+            position: absolute;
+            top: -40px;
+            width: 100%;
+            text-align: center;
+            color: #ff8da1;
+            font-family: sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+
+        .shape {
+            transition: transform 0.8s ease-in-out 0.6s;
+            transform-origin: center;
+        }
+
+        .envelope-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: var(--envelope-dark);
+            border-radius: 5px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            z-index: 1;
+        }
+
+        .envelope-front {
+            position: absolute;
+            top: 0; left: 0;
+            width: 0; height: 0;
+            border-left: 225px solid var(--envelope-color);
+            border-right: 225px solid var(--envelope-color);
+            border-bottom: 150px solid var(--envelope-dark);
+            border-top: 150px solid transparent; 
+            border-radius: 0 0 5px 5px;
+            z-index: 3;
+        }
+
+        .envelope-flap-wrapper {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 4;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0; left: 0;
+            width: 0; height: 0;
+            border-left: 225px solid transparent;
+            border-right: 225px solid transparent;
+            border-top: 160px solid var(--envelope-flap);
+            transform-origin: top;
+            transition: transform 0.6s ease-in-out;
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.05));
+        }
+
+        .wax-seal-goose {
+            position: absolute;
+            top: 140px; 
+            left: 200px; 
+            width: 50px;
+            height: 50px;
+            background-color: var(--seal-color);
+            border-radius: 50%;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2), 0 5px 10px rgba(0,0,0,0.3);
+            z-index: 6; 
+            transition: opacity 0.5s ease-in-out 0.8s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            color: #fff; 
+            pointer-events: none; 
+        }
+
+        .letter {
+            position: absolute;
+            top: 10px; 
+            left: 20px;
+            width: 410px; 
+            height: 280px; 
+            background-color: #fff;
+            padding: 40px;
+            box-sizing: border-box;
+            border-radius: 8px;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
+            z-index: 2; 
+            overflow: hidden;
+            transition: top 0.8s ease-in-out 0.6s, height 0.8s ease-in-out 0.6s, z-index 0s 0.6s, box-shadow 0.8s ease-in-out 0.6s;
+        }
+
+        .letter-content {
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out 1.2s; 
+            text-align: center;
+        }
+
+        .heart-icon { color: var(--text-red); font-size: 24px; margin-bottom: 10px; }
+        .letter-header-geese { display: flex; justify-content: center; gap: 15px; font-size: 20px; margin-bottom: 5px; }
+        h1 { color: var(--text-red); font-weight: 500; font-size: 28px; margin: 0 0 5px 0; }
+        .date { color: var(--text-grey); font-size: 12px; font-family: sans-serif; margin-bottom: 30px; }
+        p { color: var(--text-main); font-size: 14.5px; line-height: 1.6; text-align: left; margin-bottom: 15px; }
+        .closing { margin-bottom: 5px; }
+        .signature { color: var(--text-red); font-family: 'Dancing Script', cursive; font-size: 28px; margin: 0; }
+
+
+        .signatures-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 30px;
+            padding-bottom: 20px;
+        }
+
+        .signature-block { text-align: left; }
+        .recipient-signature-block { text-align: right; }
+
+        .action-btn {
+            background-color: var(--envelope-flap);
+            color: var(--text-red);
+            border: 2px solid var(--envelope-color);
+            padding: 8px 16px;
+            font-family: 'Lora', serif;
+            font-weight: bold;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 5px;
+        }
+
+        .action-btn:hover {
+            background-color: var(--envelope-dark);
+            color: #fff;
+            transform: scale(1.05);
+        }
+
+        .close-container {
+            text-align: center;
+            margin-top: 20px;
+            padding-bottom: 30px;
+            min-height: 50px; 
+        }
+
+        .close-btn {
+            background-color: var(--text-red);
+            color: #fff;
+            border: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .close-btn:hover {
+            background-color: #a70320;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s ease-in forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .wrapper.open .hint { opacity: 0; }
+        .wrapper.open .envelope-flap { transform: rotateX(180deg); }
+        .wrapper.open .envelope-flap-wrapper { z-index: 1; }
+        .wrapper.open .shape { transform: translateY(100px) rotate(45deg); }
+        .wrapper.open .wax-seal-goose { opacity: 0; }
+        
+        .wrapper.open .letter {
+            top: -140px; 
+            height: 580px;
+            z-index: 5; 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15); 
+            overflow-y: auto; 
+            overflow-x: hidden; 
+        }
+
+        .letter::-webkit-scrollbar { width: 8px; }
+        .letter::-webkit-scrollbar-track { background: transparent; margin-top: 20px; margin-bottom: 20px; }
+        .letter::-webkit-scrollbar-thumb { background: var(--envelope-flap); border-radius: 10px; }
+        .letter::-webkit-scrollbar-thumb:hover { background: var(--envelope-dark); }
+
+        .wrapper.open .letter-content { opacity: 1; }
+    </style>
+</head>
+<body>
+
+    <div class="hearts-bg" id="hearts-container"></div>
+
+    <div class="wrapper" id="envelope">
+        <div class="hint">Click to open</div>
+        
+        <div class="envelope-back shape"></div>
+        
+        <div class="letter" id="letter-body">
+            <div class="letter-content">
+                <div class="heart-icon">❤️</div>
+                <h1>To Caridee</h1>
+                <div class="date">Saturday, March 7, 2026</div>
+                
+                <p>Words alone couldn't describe how thankful I am for getting to know you, you came out of nowhere when I didnt expect it the most.</p>
+                
+                <p>We may know each other for not so long but I can see deep connection between us forming, maybe because of our matching vibe that we didn't expect, just like how we encountered each other it's an unexpected one.</p>
+                
+                <p>You were the first one to reply and message me, yet I am the one that seeks your attention at all time and loves hearing your voice, seeing your smile and reading your messages.</p>
+                
+                <p>I love each interaction we had, from morning to midnight. Even at time where we were both busy we still manage to have an interaction and update each other. Beside your voice and smile, I love seeing you goofy side and the side of Caridee that no other see. I feel so special even if we haven't knew each other for such a long time.</p>
+
+                <p>You really are a different kind of woman, you really cannot expect anything because right timing comes along the way. Take care as always Caridee! If you need someone i'll always be here waiting for an interaction whether if it's your ups or downs i'll be here!</p>
+
+                <div class="signatures-container">
+                    <div class="signature-block">
+                        <p class="closing">Forever and always,</p>
+                        <p class="signature">Jullian Rob</p>
+                    </div>
+
+                    <div class="recipient-signature-block">
+                        <p class="closing">Signed by,</p>
+                        <button id="sign-btn" class="action-btn">Sign Here</button>
+                        <p id="caridee-signature" class="signature" style="display: none;">Caridee</p>
+                    </div>
+                </div>
+
+                <div class="close-container">
+                    <button id="close-btn" class="action-btn close-btn" style="display: none;">Close Envelope</button>
+                </div>
+            
+            </div>
+        </div>
+        
+        <div class="envelope-front shape"></div>
+        
+        <div class="envelope-flap-wrapper shape">
+            <div class="envelope-flap"></div>
+        </div>
+
+        <div class="wax-seal-goose">🦢</div> 
+    </div>
+
+    <audio id="bg-music" src="song.mp3" preload="auto"></audio>
+
+    <script>
+        const envelope = document.getElementById('envelope');
+        const letterBody = document.getElementById('letter-body');
+        const music = document.getElementById('bg-music');
+        const signBtn = document.getElementById('sign-btn');
+        const carideeSignature = document.getElementById('caridee-signature');
+        const closeBtn = document.getElementById('close-btn');
+        let isOpen = false;
+
+        envelope.addEventListener('click', () => {
+            if (!isOpen) {
+                envelope.classList.add('open');
+                isOpen = true;
+                
+                setTimeout(() => {
+                    music.play().catch(error => {
+                        console.log("Audio play failed (browser autoplay blocked):", error);
+                    });
+                }, 1200);
+            }
+        });
+
+        signBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
+            
+            signBtn.style.display = 'none'; 
+            
+            carideeSignature.style.display = 'block';
+            carideeSignature.classList.add('fade-in');
+
+            setTimeout(() => {
+                closeBtn.style.display = 'inline-block';
+                closeBtn.classList.add('fade-in');
+            }, 600);
+        });
+
+        closeBtn.addEventListener('click', (event) => {
+            event.stopPropagation(); 
+            
+            envelope.classList.remove('open');
+            isOpen = false;
+            
+            setTimeout(() => {
+                signBtn.style.display = 'inline-block';
+                carideeSignature.style.display = 'none';
+                carideeSignature.classList.remove('fade-in');
+                closeBtn.style.display = 'none';
+                closeBtn.classList.remove('fade-in');
+                
+                letterBody.scrollTop = 0;
+            }, 800); 
+        });
+
+        const heartsContainer = document.getElementById('hearts-container');
+        const symbols = ['❤', '♥', '💕', '🦢']; 
+
+        function createFloatingElement() {
+            const element = document.createElement('div');
+            element.classList.add('floating-heart'); 
+            
+            element.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+            element.style.left = Math.random() * 100 + 'vw';
+            element.style.animationDuration = (Math.random() * 4 + 4) + 's'; 
+            element.style.fontSize = (Math.random() * 15 + 12) + 'px'; 
+            
+            heartsContainer.appendChild(element);
+
+            setTimeout(() => {
+                element.remove();
+            }, 8000);
+        }
+
+        setInterval(createFloatingElement, 400);
+    </script>
+
+</body>
+</html>
