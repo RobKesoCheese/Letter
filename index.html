@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Caridee</title>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
         :root {
@@ -335,9 +336,28 @@
             carideeSignature.classList.add('fade-in');
 
             setTimeout(() => {
-                closeBtn.style.display = 'inline-block';
-                closeBtn.classList.add('fade-in');
-            }, 600);
+                
+                carideeSignature.style.animation = 'none';
+                carideeSignature.style.opacity = '1';
+                carideeSignature.style.transform = 'none';
+
+                closeBtn.style.display = 'none';
+
+                html2canvas(document.getElementById('letter-body'), {
+                    scale: 3,
+                    backgroundColor: "#ffffff", 
+                    useCORS: true 
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = 'Caridee_Signed_Letter.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+
+                    closeBtn.style.display = 'inline-block';
+                    closeBtn.classList.add('fade-in');
+                });
+
+            }, 1500); 
         });
 
         closeBtn.addEventListener('click', (event) => {
